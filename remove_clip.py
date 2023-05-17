@@ -48,3 +48,6 @@ def main():
     END_TIME = '00:00:10'
     OUTPUT_VIDEO_FILE = r'E:\grabaciones\FarCry 6\2023-05-13\output.mp4'
     remove_clip(VIDEO, START_TIME, END_TIME, OUTPUT_VIDEO_FILE)
+
+if __name__ == '__main__':
+    main()

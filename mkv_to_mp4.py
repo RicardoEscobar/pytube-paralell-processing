@@ -17,7 +17,7 @@ def mkv_to_mp4(input_video_path: str, output_video_file: str = None) -> str:
     if output_video_file is None:
         output_video_file = input_video_path.with_suffix('.mp4')
 
-    ffmpeg_command = f'ffmpeg -hide_banner -loglevel error -i "{input_video_path}" -c:v libx265 -c:a copy -n "{output_video_file}"'
+    ffmpeg_command = f'ffmpeg -hide_banner -loglevel error -i "{input_video_path}" -c:v libx264 -preset:v slow -crf 18 -r 60 -vf "scale=-2:1080,format=yuv420p" -c:a aac -b:a 192k -ac 2 -ar 48000 -movflags +faststart -n "{output_video_file}"'
     print(ffmpeg_command)
 
     try:
@@ -60,15 +60,15 @@ def process_dir(input_dir: str, output_dir: str = None) -> None:
         return
     else:
         # If not, process all mkv files in the directory.
-        for file in get_mkv_file(input_dir):
-            mkv_to_mp4(file.resolve(), output_dir / file.with_suffix('.mp4').name)
+        # for file in get_mkv_file(input_dir):
+        #     mkv_to_mp4(file.resolve(), output_dir / file.with_suffix('.mp4').name)
         
-    # pool = mp.Pool()
-    # pool.starmap(mkv_to_mp4, [(file.resolve(), output_dir / file.with_suffix('.mp4').name) for file in get_mkv_file(input_dir)])
+        pool = mp.Pool()
+        pool.starmap(mkv_to_mp4, [(file.resolve(), output_dir / file.with_suffix('.mp4').name) for file in get_mkv_file(input_dir)])
 
 @time_it
 def main():
-    PATH = Path(r'D:\Carhartt')
+    PATH = Path(r'E:\grabaciones')
     process_dir(PATH)
 
 if __name__ == '__main__':

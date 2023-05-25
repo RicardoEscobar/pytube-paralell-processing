@@ -17,7 +17,8 @@ def mkv_to_mp4(input_video_path: str, output_video_file: str = None) -> str:
     if output_video_file is None:
         output_video_file = input_video_path.with_suffix('.mp4')
 
-    ffmpeg_command = f'ffmpeg -hide_banner -loglevel error -i "{input_video_path}" -c:v libx264 -preset:v slow -crf 18 -r 60 -vf "scale=-2:1080,format=yuv420p" -c:a aac -b:a 192k -ac 2 -ar 48000 -movflags +faststart -n "{output_video_file}"'
+    # ffmpeg_command = f'ffmpeg -hide_banner -loglevel error -i "{input_video_path}" -c:v libx264 -preset:v slow -crf 18 -r 60 -vf "scale=-2:1080,format=yuv420p" -c:a aac -b:a 192k -ac 2 -ar 48000 -movflags +faststart -n "{output_video_file}"'
+    ffmpeg_command = f'ffmpeg -hide_banner -loglevel error -i "{input_video_path}" -c:v libx264 -c:a copy -n "{output_video_file}"'
     print(ffmpeg_command)
 
     try:
@@ -31,40 +32,25 @@ def mkv_to_mp4(input_video_path: str, output_video_file: str = None) -> str:
         return output_video_file
 
 def get_mkv_file(input_dir: str = '.') -> str:
-    """Generator that yields of all mkv files in a directory."""
+    """Generator that yields of all mkv files in a directory and sub directories."""
     input_dir = Path(input_dir)
     for file in input_dir.iterdir():
-        if file.suffix == '.mkv':
+        if file.is_dir():
+            yield from get_mkv_file(file)
+        elif file.suffix == '.mkv':
             yield file
 
 @time_it
-def process_dir(input_dir: str, output_dir: str = None) -> None:
+def process_dir(input_dir: str) -> None:
     """Convert all mkv files in a directory to mp4 files.
     args:
         dir: Path to the directory.
     """
-    input_dir = Path(input_dir)
-    if output_dir is None:
-        output_dir = Path(input_dir)
-    else:
-        output_dir = Path(output_dir)
-    
-    output_dir.mkdir(exist_ok=True)
 
-    # Ask if the input directory contains subdirectories.
-    if any([file.is_dir() for file in input_dir.iterdir()]):
-        # If so, process all subdirectories.
-        for subdir in input_dir.iterdir():
-            if subdir.is_dir():
-                process_dir(subdir, output_dir / subdir.name)
-        return
-    else:
-        # If not, process all mkv files in the directory.
-        # for file in get_mkv_file(input_dir):
-        #     mkv_to_mp4(file.resolve(), output_dir / file.with_suffix('.mp4').name)
-        
-        pool = mp.Pool()
-        pool.starmap(mkv_to_mp4, [(file.resolve(), output_dir / file.with_suffix('.mp4').name) for file in get_mkv_file(input_dir)])
+    # Use pool to parallelize the conversion.
+    pool = mp.Pool()
+    pool.starmap(mkv_to_mp4, [(file.resolve(), file.with_suffix('.mp4')) for file in get_mkv_file(input_dir)])
+
 
 @time_it
 def main():

@@ -46,14 +46,20 @@ def download_video_HQ(yt: YouTube, output_path: Path = Path()):
     Path(video_stream).unlink()
     Path(audio_stream).unlink()
 
-
 @time_it
 def download_audio_yt(yt: YouTube, output_path: Path = Path()):
     """Download a youtube audio."""
-    filename = yt.streams.filter(only_audio=True).order_by('abr').desc().first().download(output_path=output_path)
-    to_mp3(Path(filename))
-
     
+    
+    # Create tmp directory for downloading the streams.
+    tmp_path = Path(output_path / 'tmp')
+    tmp_path.mkdir(exist_ok=True)
+
+    # get all DASH audio streams
+    filename = yt.streams.filter(only_audio=True).order_by('abr').desc().first().download(output_path=tmp_path)
+
+    to_mp3(Path(filename), output_path)
+
 @time_it
 def download_playlist(url):
     """Download a youtube playlist."""
@@ -72,11 +78,31 @@ def download_playlist(url):
     # Delete the temporal directory
     tmp_path.rmdir()
 
+def download_playlist_mp3(url):
+    """Download a youtube playlist."""
+    playlist = Playlist(url)
+    output_path = Path(sanitize_path(playlist.title) + ' - ' + playlist.playlist_id)
+    output_path.mkdir(exist_ok=True)
+
+    # Make temporal directory for downloading the streams.
+    tmp_path = Path(output_path / 'tmp')
+    tmp_path.mkdir(exist_ok=True)
+
+    print(f'Downloading {len(playlist.videos)} videos from {playlist.title}')
+    pool = mp.Pool()
+    pool.starmap(download_audio_yt, [(video, output_path) for video in playlist.videos])
+
+    # Delete the temporal directory
+    print('Deleting temporal files...')
+    tmp_path.rmdir()
+
 @time_it
 def main():
     print('Number of processors: ', mp.cpu_count())
-    URL_PATH = 'https://youtube.com/playlist?list=PL0vfts4VzfNiP4xgrtnSUbK99iXLINc9m'
-    download_playlist(URL_PATH)
+    URL_PATH = 'https://www.youtube.com/playlist?list=PLZOGNlgi8GGl6LQS2gXxPgqas1qSmDxG3'
+    # download_playlist(URL_PATH)
+    # download_audio_yt(YouTube(URL_PATH))
+    download_playlist_mp3(URL_PATH)
 
 
 if __name__ == '__main__':

@@ -13,6 +13,10 @@ def main():
     def download_video():
         """Download a youtube video."""
 
+        if youtube_url.get() == '':
+            status.set('Please enter a YouTube URL')
+            return
+
         # Disable the download button.
         download_button['state'] = 'disabled'
 
@@ -31,10 +35,10 @@ def main():
         """Show the progress of the download."""
 
         if bytes_total is None:
-            raise Exception('Total bytes is None')
+            raise ValueError('Total bytes is None')
 
         if filename is None:
-            raise Exception('Filename is None')
+            raise ValueError('Filename is None')
 
         bytes_downloaded = bytes_total - bytes_remaining
 

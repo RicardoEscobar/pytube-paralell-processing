@@ -15,7 +15,6 @@ def download_video_yt(youtube_url: str, output_path: Path = Path(), on_progress 
 
     # Generate actual callback function with 'partial', to pass the bytes_total argument.
     filesize = YouTube(youtube_url).streams.filter(progressive=True, file_extension='mp4').order_by('resolution').desc().first().filesize
-    print(f'Filesize: {filesize}')
     on_progress_callback = partial(on_progress, bytes_total = filesize)
 
     # Create YouTube object from the url string.

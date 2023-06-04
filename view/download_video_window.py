@@ -12,6 +12,9 @@ def main():
 
     def download_video():
         """Download a youtube video."""
+        # Disable the download button.
+        download_button['state'] = 'disabled'
+
         status.set(f'Downloading...')
 
         percent_complete.set(0.00)
@@ -54,9 +57,12 @@ def main():
             filesize = f'[{round(stream.filesize / BYTES_IN_MEGABYTE, 2)} MB]'
 
         file_path = Path(file_path)
-        complete_message = f'Completed: {file_path.name}. {filesize} downloaded.'
+        complete_message = f'Completed: {file_path.name} {filesize} downloaded.'
 
         status.set(complete_message)
+
+        # Enable the download button.
+        download_button['state'] = 'enabled'
 
 
     root = tk.Tk()

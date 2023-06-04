@@ -12,10 +12,9 @@ def main():
 
     def download_video():
         """Download a youtube video."""
+
         # Disable the download button.
         download_button['state'] = 'disabled'
-
-        status.set(f'Downloading...')
 
         percent_complete.set(0.00)
         progress_bar['value'] = percent_complete.get()
@@ -28,23 +27,28 @@ def main():
         download_video_thread = Thread(target=download_video_yt, args=(youtube_url.get(), output_path), kwargs={'on_progress': on_progress_callback, 'on_complete': on_complete_callback})
         download_video_thread.start()
 
-        #download_video_yt(youtube_url.get(), output_path=output_path, on_progress=on_progress_callback, on_complete=on_complete_callback)
-
-    def on_progress_callback(chunk, file_handler, bytes_remaining: int, bytes_total: int = None):
+    def on_progress_callback(chunk, file_handler, bytes_remaining: int, bytes_total: int = None, filename: str = None):
         """Show the progress of the download."""
 
         if bytes_total is None:
             raise Exception('Total bytes is None')
+
+        if filename is None:
+            raise Exception('Filename is None')
 
         bytes_downloaded = bytes_total - bytes_remaining
 
         # Calculate the percent complete
         percent_complete_calculate = round((bytes_downloaded / bytes_total * 100), 2)
         percent_complete.set(percent_complete_calculate)
+        percent_complete_label_text.set(f'{percent_complete_calculate}%')
         progress_bar.update()
 
         # Update progress bar graphically with update_idletasks()
         progress_bar.update_idletasks()
+
+        # Show the progress in the status bar.
+        status.set(f'Downloading {filename}')
 
     def on_complete_callback(stream, file_path):
         """Show the completion of the download."""
@@ -75,6 +79,7 @@ def main():
 
     youtube_url = tk.StringVar()
     percent_complete = tk.DoubleVar()
+    percent_complete_label_text = tk.StringVar()
     status = tk.StringVar()
 
     status.set('Waiting for URL, running like a champ!')
@@ -93,7 +98,7 @@ def main():
     # Progress bar
     progress_bar = ttk.Progressbar(root, orient=tk.HORIZONTAL, length=100, mode='determinate', variable=percent_complete)
     progress_bar.grid(row=1, column=0, columnspan=3, sticky=tk.EW)
-    progress_bar_label = ttk.Label(root, text='Progress Bar', textvariable=percent_complete)
+    progress_bar_label = ttk.Label(root, text='Progress Bar', textvariable=percent_complete_label_text)
     progress_bar_label.grid(row=1, column=2, sticky=tk.E)
 
     # Status bar

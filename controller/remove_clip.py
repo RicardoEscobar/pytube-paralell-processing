@@ -1,7 +1,7 @@
 """This script removes a section of the video given a start and an end time."""
 from pathlib import Path
 import os
-from time_it import time_it
+from controller.time_it import time_it
 
 
 @time_it
@@ -43,10 +43,10 @@ def get_video_file(input_dir: str = '.') -> str:
 
 @time_it
 def main():
-    VIDEO = r'E:\grabaciones\FarCry 6\2023-05-13\2023-05-13_11-39-51.mkv'
+    VIDEO = r'E:\grabaciones\Carhartt\2023-05-29\2023-05-29_12-00-27.mkv'
     START_TIME = '00:00:00'
-    END_TIME = '00:00:10'
-    OUTPUT_VIDEO_FILE = r'E:\grabaciones\FarCry 6\2023-05-13\output.mp4'
+    END_TIME = '01:05:30'
+    OUTPUT_VIDEO_FILE = r'E:\grabaciones\Carhartt\2023-05-29\2023-05-29_12-00-27.mp4'
     remove_clip(VIDEO, START_TIME, END_TIME, OUTPUT_VIDEO_FILE)
 
 if __name__ == '__main__':

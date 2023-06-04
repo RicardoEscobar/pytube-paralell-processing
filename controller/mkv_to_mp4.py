@@ -2,7 +2,7 @@
 from pathlib import Path
 import multiprocessing as mp
 import os
-from time_it import time_it
+from controller.time_it import time_it
 
 @time_it
 def mkv_to_mp4(input_video_path: str, output_video_file: str = None) -> str:
@@ -23,8 +23,8 @@ def mkv_to_mp4(input_video_path: str, output_video_file: str = None) -> str:
 
     try:
         os.system(ffmpeg_command)
-    except Exception as e:
-        print(e)
+    except Exception as exception:
+        print(exception)
         return None
     else:
         # Delete the input file.
@@ -56,6 +56,8 @@ def process_dir(input_dir: str) -> None:
 def main():
     PATH = Path(r'E:\grabaciones')
     process_dir(PATH)
+    #output_video_file = r'E:\grabaciones\Carhartt\2023-05-29\2023-05-29_12-00-27-compressed.mp4'
+    #mkv_to_mp4(PATH, output_video_file)
 
 if __name__ == '__main__':
     main()

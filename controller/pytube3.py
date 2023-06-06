@@ -6,25 +6,6 @@ from controller.sanitize_path import sanitize_path
 from controller.time_it import time_it
 
 
-@time_it
-def download_playlist(playlist_url: str):
-    """Download a youtube playlist."""
-    playlist = Playlist(playlist_url)
-    output_path = Path(sanitize_path(playlist.title) + " - " + playlist.playlist_id)
-    output_path.mkdir(exist_ok=True)
-
-    # Make temporal directory for downloading the streams.
-    tmp_path = Path(output_path / "tmp")
-    tmp_path.mkdir(exist_ok=True)
-
-    print(f"Downloading {len(playlist.videos)} videos from {playlist.title}")
-    pool = mp.Pool()
-    pool.starmap(download_video_hq, [(video, output_path) for video in playlist.videos])
-
-    # Delete the temporal directory
-    tmp_path.rmdir()
-
-
 def download_playlist_mp3(playlist_url: str):
     """Download a youtube playlist."""
     playlist = Playlist(playlist_url)

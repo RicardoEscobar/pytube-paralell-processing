@@ -4,8 +4,7 @@ from pathlib import Path
 import tkinter as tk
 from tkinter import ttk
 from threading import Thread
-from controller.pytube3 import download_video_yt
-from pytube import YouTube
+from controller.download_video_yt import download_video_yt
 
 def main():
     """Create the main window and run the app."""

@@ -4,7 +4,6 @@ from pytube import Playlist, YouTube
 
 from controller.sanitize_path import sanitize_path
 from controller.time_it import time_it
-from controller.to_mp3 import to_mp3
 
 
 @time_it

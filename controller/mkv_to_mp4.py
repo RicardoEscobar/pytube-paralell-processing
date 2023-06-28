@@ -1,8 +1,9 @@
 """This script converts all mkv files in the current directory to mp4 files."""
-from pathlib import Path
 import multiprocessing as mp
 import os
-from controller.time_it import time_it
+from pathlib import Path
+
+from time_it import time_it
 
 
 @time_it

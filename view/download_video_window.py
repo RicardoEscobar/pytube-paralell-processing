@@ -38,6 +38,33 @@ def main():
         )
         download_video_thread.start()
 
+    def download_audio():
+        """Download a youtube audio and convert to mp3."""
+        if youtube_url.get() == "":
+            status.set("Please enter a YouTube URL")
+            return
+
+        # Disable the download button.
+        download_audio_button["state"] = "disabled"
+
+        percent_complete.set(0.00)
+        progress_bar["value"] = percent_complete.get()
+        progress_bar.update()
+
+        # Update progress bar graphically with update_idletasks()
+        progress_bar.update_idletasks()
+
+        # Execute the download in a separate thread.
+        download_audio_thread = Thread(
+            target=download_audio_yt,
+            args=(youtube_url.get(), output_path),
+            kwargs={
+                "on_progress_callback": on_progress_callback,
+                "on_complete_callback": on_complete_callback,
+            },
+        )
+        download_audio_thread.start()
+
     def on_progress_callback(
         chunk,
         file_handler,
@@ -84,6 +111,7 @@ def main():
 
         # Enable the download button.
         download_button["state"] = "enabled"
+        download_audio_button["state"] = "enabled"
 
     root = tk.Tk()
     root.title("YouTube Downloader")
@@ -108,8 +136,12 @@ def main():
     url_entry.grid(row=0, column=1, sticky=tk.EW)
 
     # Download button
-    download_button = ttk.Button(root, text="Download", command=download_video)
+    download_button = ttk.Button(root, text="Video", command=download_video)
     download_button.grid(row=0, column=2, sticky=tk.E)
+
+    # Download audio button
+    download_audio_button = ttk.Button(root, text="MP3", command=download_audio)
+    download_audio_button.grid(row=0, column=3, sticky=tk.E)
 
     # Progress bar
     progress_bar = ttk.Progressbar(

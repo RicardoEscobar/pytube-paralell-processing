@@ -1,4 +1,11 @@
 """This script removes a section of the video given a start and an end time."""
+
+# If this file runs as a script, run add the parent directory to the sys.path.
+if __name__ == '__main__':
+    import sys
+    from pathlib import Path
+    sys.path.append(str(Path(__file__).resolve().parent.parent))
+    
 from pathlib import Path
 import os
 from controller.time_it import time_it
@@ -31,7 +38,7 @@ def remove_clip(input_video_path: str, start_time: str, end_time: str, output_vi
         print(e)
         return None
     else:
-        input_video_path.unlink()
+        # input_video_path.unlink() # Removed temporarily for testing.
         return output_video_file.resolve()
     
 def get_video_file(input_dir: str = '.') -> str:
@@ -43,10 +50,10 @@ def get_video_file(input_dir: str = '.') -> str:
 
 @time_it
 def main():
-    VIDEO = r'E:\grabaciones\Carhartt\2023-05-29\2023-05-29_12-00-27.mkv'
+    VIDEO = r'E:\grabaciones\Carhartt\2023-07-14\2023-07-14_11-20-56.mkv'
     START_TIME = '00:00:00'
-    END_TIME = '01:05:30'
-    OUTPUT_VIDEO_FILE = r'E:\grabaciones\Carhartt\2023-05-29\2023-05-29_12-00-27.mp4'
+    END_TIME = '00:55:33'
+    OUTPUT_VIDEO_FILE = r'E:\grabaciones\Carhartt\2023-07-14\2023-07-14_11-20-56_clip.mkv'
     remove_clip(VIDEO, START_TIME, END_TIME, OUTPUT_VIDEO_FILE)
 
 if __name__ == '__main__':

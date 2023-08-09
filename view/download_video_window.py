@@ -5,6 +5,7 @@ import tkinter as tk
 from tkinter import ttk
 from threading import Thread
 from controller.download_video_yt import download_video_yt
+from controller.download_audio_yt import download_audio_yt
 
 
 def main():

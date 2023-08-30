@@ -1,6 +1,14 @@
 """
 This module provides a function to download a YouTube video at the highest quality.
 """
+if __name__ == "__main__":
+    from pathlib import Path
+
+    project_directory = Path(__file__).parent.parent
+    import sys
+
+    # sys.path.insert(0, str(project_directory))
+    sys.path.append(str(project_directory))
 
 import os
 from pathlib import Path
@@ -56,3 +64,10 @@ def download_video_hq(youtube_url: str, output_path: Path = Path()):
     Path(video_stream).unlink()
     Path(audio_stream).unlink()
     tmp_path.rmdir()
+
+
+if __name__ == "__main__":
+    download_video_hq(
+        "https://www.youtube.com/watch?v=TOoC7aXkpMs&list=PLZOGNlgi8GGncx1etrSzhrHM1GqoFindD&index=4&pp=gAQBiAQB8AUB",
+        output_path=Path("./downloads"),
+    )

@@ -55,11 +55,11 @@ def get_video_file(input_dir: str = ".") -> str:
 
 @time_it
 def main():
-    VIDEO = r"E:\grabaciones\Carhartt\2023-08-30\2023-08-30_14-02-12.mkv"
+    VIDEO = r"E:\grabaciones\Carhartt\2023-10-13\2023-10-13_11-00-44.mkv"
     START_TIME = "00:00:00"
-    END_TIME = "01:00:13"
+    END_TIME = "00:12:36"
     OUTPUT_VIDEO_FILE = (
-        r"E:\grabaciones\Carhartt\2023-07-14\2023-08-30_14-02-12_clip.mkv"
+        r"E:\grabaciones\Carhartt\2023-10-13\2023-10-13_11-00-44_clip.mkv"
     )
     remove_clip(VIDEO, START_TIME, END_TIME, OUTPUT_VIDEO_FILE)
 

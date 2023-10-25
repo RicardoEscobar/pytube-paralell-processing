@@ -69,7 +69,10 @@ def download_video_hq(youtube_url: str, output_path: Path = Path()) -> str:
     highest_quality = dash_streams.order_by("abr").desc().first()
 
     # download the stream
-    audio_stream = highest_quality.download(output_path=tmp_path)
+    try:
+        audio_stream = highest_quality.download(output_path=tmp_path)
+    except AttributeError as error:
+        return f"AttributeError: {error}"
 
     # Call ffmpeg to merge the streams
     ffmpeg_command = (

@@ -7,7 +7,7 @@ class TestDownloadPlaylist(unittest.TestCase):
 
     def test_download_playlist(self):
         """test_download_playlist"""
-        url = "https://youtube.com/playlist?list=PLZOGNlgi8GGlDoYu41o4Ut8UjOAK_5LVX&si=yUjawBLzU45CmHBM"
+        url = "https://youtube.com/playlist?list=PLZOGNlgi8GGngGbemywOOV8uGg7YY-6aB&si=cfBYNcjOyDPvxPKJ"
         output_dir = r"E:\YouTube downloads"
 
         result = download_playlist(url, output_dir)

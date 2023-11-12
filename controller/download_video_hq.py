@@ -76,7 +76,7 @@ def download_video_hq(youtube_url: str, output_path: Path = Path()) -> str:
 
     # Call ffmpeg to merge the streams
     ffmpeg_command = (
-        f"ffmpeg -hide_banner -loglevel error -i "
+        f"ffmpeg -hide_banner -loglevel error -y -i "
         f'"{video_stream}" -i "{audio_stream}" -c copy "{output_file_path}"'
     )
     os.system(ffmpeg_command)
@@ -93,6 +93,6 @@ def download_video_hq(youtube_url: str, output_path: Path = Path()) -> str:
 
 if __name__ == "__main__":
     download_video_hq(
-        "https://www.youtube.com/watch?v=TOoC7aXkpMs&list=PLZOGNlgi8GGncx1etrSzhrHM1GqoFindD&index=4&pp=gAQBiAQB8AUB",
+        "https://youtube.com/playlist?list=PLZOGNlgi8GGngGbemywOOV8uGg7YY-6aB&si=nwktYgltYd4QLnpw",
         output_path=Path("./downloads"),
     )

@@ -1,6 +1,4 @@
 {
-    "python.linting.pylintEnabled": true,
-    "python.linting.enabled": true,
     "python.autoComplete.extraPaths": [
         "C:\\Users\\Jorge\\git\\pytube-paralell-processing"],
     "python.analysis.extraPaths": [
@@ -8,7 +6,18 @@
     ],
     "[python]": {
     "editor.defaultFormatter": "ms-python.black-formatter",
-    "editor.formatOnSave": true
+    "editor.formatOnSave": false
     },
-    "python.formatting.provider": "none",
+    "python.testing.unittestArgs": [
+        "-v",
+        "-s",
+        "./tests/unit/",
+        "-p",
+        "test_*.py"
+    ],
+    "python.testing.pytestEnabled": false,
+    "python.testing.unittestEnabled": true,
+    "cSpell.words": [
+        "pytube"
+    ],
 }

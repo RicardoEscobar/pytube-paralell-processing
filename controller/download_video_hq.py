@@ -55,7 +55,10 @@ def download_video_hq(youtube_url: str, output_path: Path = Path()) -> str:
 
     # Check if the file already exists
     if output_file_path.exists():
+        print(f"File already exists: {output_file_path}")
         return str(output_file_path)
+    else:
+        print(f"Downloading output_file_path: {output_file_path}")
 
     # download the stream
     video_stream = highest_quality.download(output_path=tmp_path)
@@ -74,18 +77,38 @@ def download_video_hq(youtube_url: str, output_path: Path = Path()) -> str:
     except AttributeError as error:
         return f"AttributeError: {error}"
 
+    # Validate that both streams were downloaded and have the same duration
+    if not video_stream or not audio_stream:
+        return "Error: Could not download the streams"
+
+    # Get the duration of the video and audio streams
+    video_duration = int(YouTube(video_stream).length)
+    audio_duration = int(YouTube(audio_stream).length)
+
+    # If the duration of the streams is different, return an error
+    if video_duration != audio_duration:
+        return "Error: The duration of the streams is different"
+
     # Call ffmpeg to merge the streams
     ffmpeg_command = (
         f"ffmpeg -hide_banner -loglevel error -y -i "
         f'"{video_stream}" -i "{audio_stream}" -c copy "{output_file_path}"'
     )
-    os.system(ffmpeg_command)
 
-    # Delete the temporal files
-    Path(video_stream).unlink()
-    Path(audio_stream).unlink()
-    if tmp_path.exists() and tmp_path.is_dir() and not list(tmp_path.iterdir()):
-        tmp_path.rmdir()
+    try:
+        os.system(ffmpeg_command)
+    except Exception as error:
+        return f"Error: {error}"
+    else:
+        print(f"Downloaded: {output_file_path}")
+
+        # Delete the temporal files
+        Path(video_stream).unlink()
+        Path(audio_stream).unlink()
+
+    # Delete the temporal directory if it is empty
+    # if tmp_path.exists() and tmp_path.is_dir() and not list(tmp_path.iterdir()):
+    #     tmp_path.rmdir()
 
     # Return the path to the downloaded video
     return str(output_file_path)
@@ -93,6 +116,6 @@ def download_video_hq(youtube_url: str, output_path: Path = Path()) -> str:
 
 if __name__ == "__main__":
     download_video_hq(
-        "https://youtube.com/playlist?list=PLZOGNlgi8GGngGbemywOOV8uGg7YY-6aB&si=nwktYgltYd4QLnpw",
-        output_path=Path("./downloads"),
+        "https://youtu.be/WR1yY5JILwQ?si=nlMx7tgz-f6Vl7oZ",
+        output_path=Path(r"E:\YouTube downloads\Phonk playlist"),
     )

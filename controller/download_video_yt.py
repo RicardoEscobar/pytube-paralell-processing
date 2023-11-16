@@ -1,7 +1,18 @@
+if __name__ == "__main__":
+    from pathlib import Path
+
+    project_directory = Path(__file__).parent.parent
+    import sys
+
+    # sys.path.insert(0, str(project_directory))
+    sys.path.append(str(project_directory))
+
 from controller.time_it import time_it
 from pathlib import Path
 from pytube import YouTube
 from functools import partial
+
+from controller.progress_bar import on_progress
 
 
 @time_it
@@ -40,3 +51,11 @@ def download_video_yt(
         import traceback
 
         traceback.print_tb(e.__traceback__)
+
+
+if __name__ == "__main__":
+    download_video_yt(
+        "https://youtu.be/CmKzYVcfulA?si=ozvLodXI4V0Rpi49",
+        output_path=Path(r"E:\YouTube downloads\Phonk playlist"),
+        on_progress=on_progress,
+    )

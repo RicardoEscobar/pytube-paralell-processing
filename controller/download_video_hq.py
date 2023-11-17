@@ -44,13 +44,17 @@ def download_video_hq(youtube_url: str, output_path: Path = Path()) -> str:
 
     # sort by resolution or bitrate to get the highest quality stream
     highest_quality = dash_streams.order_by("resolution").desc().first()
+    
+    # Add the video_id to the filename
+    video_filename = f"{youtube.video_id}_{highest_quality.default_filename}"
 
     # If there is no stream with resolution, sort by bitrate
     if highest_quality is None:
         highest_quality = dash_streams.order_by("abr").desc().first()
 
     # Create the output file path
-    output_file_path = Path(output_path, sanitize_path(youtube.title) + ".mp4")
+    output_file = f"{youtube.video_id}_{highest_quality.default_filename}"
+    output_file_path = Path(output_path, output_file)
     output_file_path = output_file_path.resolve()
 
     # Check if the file already exists
@@ -61,7 +65,7 @@ def download_video_hq(youtube_url: str, output_path: Path = Path()) -> str:
         print(f"Downloading output_file_path: {output_file_path}")
 
     # download the stream
-    video_stream = highest_quality.download(output_path=tmp_path)
+    video_stream = highest_quality.download(output_path=tmp_path, filename=video_filename)
 
     # get all DASH audio streams
     dash_streams = youtube.streams.filter(
@@ -71,23 +75,18 @@ def download_video_hq(youtube_url: str, output_path: Path = Path()) -> str:
     # sort by bitrate to get the highest quality stream
     highest_quality = dash_streams.order_by("abr").desc().first()
 
+    # Add the video_id to the filename
+    audio_filename = f"{youtube.video_id}_{highest_quality.default_filename}"
+
     # download the stream
     try:
-        audio_stream = highest_quality.download(output_path=tmp_path)
+        audio_stream = highest_quality.download(output_path=tmp_path, filename=audio_filename)
     except AttributeError as error:
         return f"AttributeError: {error}"
 
     # Validate that both streams were downloaded and have the same duration
     if not video_stream or not audio_stream:
         return "Error: Could not download the streams"
-
-    # Get the duration of the video and audio streams
-    video_duration = int(YouTube(video_stream).length)
-    audio_duration = int(YouTube(audio_stream).length)
-
-    # If the duration of the streams is different, return an error
-    if video_duration != audio_duration:
-        return "Error: The duration of the streams is different"
 
     # Call ffmpeg to merge the streams
     ffmpeg_command = (
@@ -116,6 +115,6 @@ def download_video_hq(youtube_url: str, output_path: Path = Path()) -> str:
 
 if __name__ == "__main__":
     download_video_hq(
-        "https://youtu.be/WR1yY5JILwQ?si=nlMx7tgz-f6Vl7oZ",
+        "https://www.youtube.com/watch?v=U0yFunptU1g&ab_channel=PhonkKawaii",
         output_path=Path(r"E:\YouTube downloads\Phonk playlist"),
     )

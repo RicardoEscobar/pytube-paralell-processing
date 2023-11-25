@@ -28,6 +28,7 @@ def remove_clip(
         Path to the output video file.
     """
     input_video_path = Path(input_video_path)
+    output_video_file = Path(output_video_file)
 
     # Use the same video file name as input, but change the extension to .mp4
     ffmpeg_command = (
@@ -55,11 +56,11 @@ def get_video_file(input_dir: str = ".") -> str:
 
 @time_it
 def main():
-    VIDEO = r"E:\grabaciones\Carhartt\2023-11-10\2023-11-10_11-01-08.mkv"
+    VIDEO = r"E:\grabaciones\Carhartt\2023-11-24\2023-11-24_10-53-29.mkv"
     START_TIME = "00:00:00"
-    END_TIME = "00:52:24"
+    END_TIME = "00:17:11"
     OUTPUT_VIDEO_FILE = (
-        r"E:\grabaciones\Carhartt\2023-11-10\2023-11-10_11-01-08_clip.mkv"
+        r"E:\grabaciones\Carhartt\2023-11-24\2023-11-24_10-53-29_clip.mkv"
     )
     remove_clip(VIDEO, START_TIME, END_TIME, OUTPUT_VIDEO_FILE)
 

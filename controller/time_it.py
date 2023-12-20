@@ -10,37 +10,49 @@ if __name__ == "__main__":
     sys.path.append(str(project_directory))
 
 import time
-import functools
-from pathlib import Path
+import datetime
+from functools import wraps
+import logging
 
 from controller.create_logger import create_logger
 
-# Create a logger for this module.
+# Create a logger for this module
 module_logger = create_logger(
     logger_name="controller.time_it",
     logger_filename="time_it.log",
-    log_directory=Path(__file__).parent.parent / "logs",
+    log_directory="logs",
     add_date_to_filename=False,
+    console_logging=True,
+    console_log_level=logging.INFO,
 )
 
 
 def time_it(func):
-    @functools.wraps(func)
+    """Decorator to time function calls."""
+
+    @wraps(func)
     def wrapper(*args, **kwargs):
-        start = time.time()
+        """Wrapper function for time_it decorator."""
+        start_time = time.time()
         result = func(*args, **kwargs)
-        end = time.time()
-        duration = end - start
+        end_time = time.time()
+        duration_seconds = end_time - start_time
+        duration_formatted = str(datetime.timedelta(seconds=duration_seconds))
         module_logger.info(
-            f"{func.__name__} took {(duration) :.2f} seconds. ({seconds_to_minutes(duration)}) minutes"
+            "Function %s took %s to complete.",
+            func.__name__,
+            duration_formatted,
         )
         return result
 
     return wrapper
 
 
-def seconds_to_minutes(seconds):
-    """Convert seconds to minutes:seconds."""
-    minutes = seconds // 60
-    seconds %= 60
-    return f"{int(minutes)}:{int(seconds)}"
+if __name__ == "__main__":
+    @time_it
+    def test_function():
+        """Test function for time_it decorator."""
+        time.sleep(1)
+
+
+    test_function()

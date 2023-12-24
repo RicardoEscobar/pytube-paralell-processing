@@ -22,8 +22,6 @@ module_logger = create_logger(
     logger_filename="time_it.log",
     log_directory="logs",
     add_date_to_filename=False,
-    console_logging=True,
-    console_log_level=logging.INFO,
 )
 
 

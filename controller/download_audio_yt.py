@@ -20,12 +20,12 @@ def download_audio_yt(
 
     # Create tmp directory for downloading the streams.
     if output_path is None:
-        output_path = Path("." / "downloads")
+        output_path = Path(".") / "downloads"
     else:
         output_path = Path(output_path)
 
     # Create tmp directory for downloading the streams.
-    tmp_path = Path(output_path / "tmp")
+    tmp_path = Path(output_path) / "tmp"
     tmp_path.mkdir(exist_ok=True)
 
     # Create Stream object from the url string.

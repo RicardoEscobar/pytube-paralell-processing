@@ -16,7 +16,7 @@ import os
 from pathlib import Path
 
 from controller.create_logger import create_logger
-from controller.time_it import time_it, seconds_to_minutes
+from controller.time_it import time_it
 
 # Create a logger for this module.
 module_logger = create_logger(
@@ -98,20 +98,18 @@ def process_dir(input_dir, video_codec):
 @time_it
 def main():
     """Main function."""
-    start = time.time()
+
     module_logger.info("Starting mkv_to_mp4.py")
     PATH = Path(r"E:\grabaciones")
     VIDEO_CODEC = "libx265"
     module_logger.debug(f"VIDEO_CODEC: {VIDEO_CODEC}")
     module_logger.debug(f"PATH: {PATH}")
     process_dir(PATH, VIDEO_CODEC)
-    end = time.time()
-    duration = end - start
-    module_logger.info(
-        f"Finished mkv_to_mp4.py in {duration:.2f} seconds. ({seconds_to_minutes(duration)}) minutes."
-    )
-    # output_video_file = r'E:\grabaciones\Carhartt\2023-05-29\2023-05-29_12-00-27-compressed.mp4'
-    # mkv_to_mp4(PATH, output_video_file)
+
+
+    # input_video_path = r'E:\grabaciones\Super mario rpg\2023-12-24\2023-12-24_13-41-12.mkv'
+    # output_video_file = r'E:\grabaciones\Super mario rpg\2023-12-24\2023-12-24_13-41-12-compressed.mp4'
+    # mkv_to_mp4(input_video_path, output_video_file)
 
 
 if __name__ == "__main__":

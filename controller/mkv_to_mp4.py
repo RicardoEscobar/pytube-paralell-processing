@@ -15,6 +15,8 @@ import threading as th
 import os
 from pathlib import Path
 
+from tqdm import tqdm
+
 from controller.create_logger import create_logger
 from controller.time_it import time_it
 
@@ -94,13 +96,47 @@ def process_dir(input_dir, video_codec):
             except Exception as exception:
                 module_logger.error(f"Exception: {exception}")
 
+def calculate_progress(total, current):
+    """Calculate the progress of a task given the total and current time."""
+    total_parts = total.split(":")
+    current_parts = current.split(":")
+    
+    total_seconds = int(total_parts[0]) * 3600 + int(total_parts[1]) * 60 + float(total_parts[2])
+    current_seconds = int(current_parts[0]) * 3600 + int(current_parts[1]) * 60 + float(current_parts[2])
+    
+    progress = (current_seconds / total_seconds) * 100
+    return progress
+
+def test_progress_bar():
+    total = "00:00:10.00"
+    pbar = tqdm(total=100)  # Set total progress as 100 (percentage)
+
+    for i in range(10):
+        time.sleep(1)  # Simulate work
+        current = f"00:00:{i+1:02d}.00"
+        progress = calculate_progress(total, current)
+        pbar.update(progress - pbar.n)  # Update the progress bar with the incremental progress
+
+    pbar.close()  # Ensure the progress bar is properly closed after completion
+
 
 @time_it
 def main():
     """Main function."""
+    module_logger.info("Starting mkv_to_mp4.py")
+    videopath = Path(r'F:\FIRECUDA2\grabaciones\Carhartt\2024-04-18\2024-04-17_12-25-51_merge.mkv')
+    outputpath = Path(r'F:\FIRECUDA2\grabaciones\Carhartt\2024-04-18\output.mp4')
+    # ffmpeg -i input.mp4 output.mp4 1> progress.txt 2>&1
+    ffmpeg_command = f'ffmpeg -i "{str(videopath)}" "{str(outputpath)}" 1> "progress_{str(outputpath.stem)}.txt" 2>&1'
+    print(ffmpeg_command)
+    os.system(ffmpeg_command)
+
+@time_it
+def main1():
+    """Main function."""
 
     module_logger.info("Starting mkv_to_mp4.py")
-    PATH = Path(r"E:\grabaciones")
+    PATH = Path(r"F:\FIRECUDA2\grabaciones")
     VIDEO_CODEC = "libx265"
     module_logger.debug(f"VIDEO_CODEC: {VIDEO_CODEC}")
     module_logger.debug(f"PATH: {PATH}")
@@ -113,4 +149,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    test_progress_bar()

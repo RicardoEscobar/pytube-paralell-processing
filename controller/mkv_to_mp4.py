@@ -15,11 +15,13 @@ import concurrent.futures
 import threading as th
 import os
 from pathlib import Path
+import re
 
 from tqdm import tqdm
 
 from controller.create_logger import create_logger
 from controller.time_it import time_it
+from controller.get_video_duration import get_video_duration, get_latest_time
 
 # Create a logger for this module.
 module_logger = create_logger(
@@ -99,9 +101,14 @@ def process_dir(input_dir, video_codec):
 
 
 def calculate_progress(total, current):
-    """Calculate the progress of a task given the total and current time."""
-    total_parts = total.split(":")
-    current_parts = current.split(":")
+    """Calculate the progress of a task given the total and current time.
+    args:
+        total: Total time of the task. Format is 'HH:MM:SS.ff' example: '00:47:18.32'.
+        current: Current time of the task. Format is 'HH:MM:SS.ff' example: '00:47:18.32'.
+    returns:
+        Progress of the task as a percentage."""
+    total_parts = re.split(r"[:.]", total)
+    current_parts = re.split(r"[:.]", current)
 
     total_seconds = (
         int(total_parts[0]) * 3600 + int(total_parts[1]) * 60 + float(total_parts[2])
@@ -117,13 +124,15 @@ def calculate_progress(total, current):
 
 
 def test_progress_bar():
-    total = "00:00:10.00"
     pbar = tqdm(total=100)  # Set total progress as 100 (percentage)
-
+    total = None
     for i in range(10):
         time.sleep(1)  # Simulate work
-        current = f"00:00:{i+1:02d}.00"
-        progress = calculate_progress(total, current)
+        if not total:
+            total = get_video_duration("progress_output.txt")
+        current = get_latest_time("progress_output.txt")
+        if current and total:
+            progress = calculate_progress(total, current)
         pbar.update(
             progress - pbar.n
         )  # Update the progress bar with the incremental progress
@@ -132,7 +141,7 @@ def test_progress_bar():
 
 
 @time_it
-def main():
+def main2():
     """Main function."""
     module_logger.info("Starting mkv_to_mp4.py")
     videopath = Path(
@@ -142,11 +151,13 @@ def main():
     # ffmpeg -i input.mp4 output.mp4 1> progress.txt 2>&1
     ffmpeg_command = f'ffmpeg -i "{str(videopath)}" "{str(outputpath)}" 1> "progress_{str(outputpath.stem)}.txt" 2>&1'
     print(ffmpeg_command)
+
+    # uses the os.system() function to run the ffmpeg command
     os.system(ffmpeg_command)
 
 
 @time_it
-def main1():
+def main():
     """Main function."""
 
     module_logger.info("Starting mkv_to_mp4.py")
@@ -162,4 +173,4 @@ def main1():
 
 
 if __name__ == "__main__":
-    test_progress_bar()
+    main()

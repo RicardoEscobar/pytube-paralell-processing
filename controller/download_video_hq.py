@@ -1,6 +1,7 @@
 """
 This module provides a function to download a YouTube video at the highest quality.
 """
+
 if __name__ == "__main__":
     from pathlib import Path
 
@@ -11,6 +12,7 @@ if __name__ == "__main__":
     sys.path.append(str(project_directory))
 
 import os
+import traceback
 from pathlib import Path
 from pytube import YouTube, exceptions
 from controller.sanitize_path import sanitize_path
@@ -18,73 +20,112 @@ from controller.time_it import time_it
 
 
 @time_it
-def download_video_hq(youtube_url: str, output_path: Path = Path()) -> str:
+def download_video_hq(
+    youtube_url: str, output_path: Path = None, index: int = None
+) -> Path:
     """Download a youtube video at the highest quality.
     args:
         youtube_url (str): The URL of the video to download.
         output_path (Path): The path to the output directory.
+        index (int): The index of the video in the playlist.
     returns:
         The path to the downloaded video."""
+    # If the output directory is a string, convert it to a Path object.
+    if isinstance(output_path, str):
+        output_path = Path(output_path)
+
+    # If the output directory does not exist, create it.
+    output_path.mkdir(parents=True, exist_ok=True)
 
     # Create YouTube object from the url string.
     youtube = YouTube(youtube_url)
 
-    # Get temporal directory for downloading the streams.
-    tmp_path = Path(output_path / "tmp")
-
+    # Form the output file path
     try:
-        # get all DASH video streams
-        dash_streams = youtube.streams.filter(
-            type="video", subtype="mp4", progressive=False
+        # Get the highest quality video stream.
+        highest_quality = (
+            youtube.streams.filter(adaptive=True)
+            .order_by("resolution")
+            .desc()
+            .first()
         )
     except exceptions.LiveStreamError as error:
         return f"LiveStreamError: {error}"
     except Exception as error:
-        return f"Error: {error}"
+        tb = traceback.format_exc()
+        print(tb)
+        return f"Error: {error}. Youtube URL: {repr(youtube_url)}, Output path: {repr(output_path)}"
 
     # sort by resolution or bitrate to get the highest quality stream
-    highest_quality = dash_streams.order_by("resolution").desc().first()
-    
-    # Add the video_id to the filename
-    video_filename = f"{youtube.video_id}_{highest_quality.default_filename}"
 
-    # If there is no stream with resolution, sort by bitrate
-    if highest_quality is None:
-        highest_quality = dash_streams.order_by("abr").desc().first()
+    # Get the video id, file name, extension and index
+    default_filename = highest_quality.default_filename
+    video_id = youtube.video_id
+    extension = Path(default_filename).suffix
+    filename = Path(default_filename).stem
+    video_index = f"{index:02d}" if index else ""
 
-    # Create the output file path
-    output_file = f"{youtube.video_id}_{highest_quality.default_filename}"
-    output_file_path = Path(output_path, output_file)
-    output_file_path = output_file_path.resolve()
+    # Form the video filename
+    if index:
+        output_file_path = (
+            output_path / f"{video_index}_{filename}_{video_id}.mp4"
+        )
+    else:
+        output_file_path = output_path / f"{filename}_{video_id}.mp4"
 
-    # Check if the file already exists
+    # Check if the file already exists, if so, return the path
     if output_file_path.exists():
         print(f"File already exists: {output_file_path}")
-        return str(output_file_path)
+        return output_file_path
+
+    # Get temporal directory for downloading the streams.
+    tmp_path = Path(output_path / "tmp")
+
+    # Create the temporal directory if it does not exist.
+    tmp_path.mkdir(parents=True, exist_ok=True)
+
+    # Form the video filename
+    if index:
+        video_path = (
+            tmp_path / f"{video_index}_{filename}_{video_id}{extension}"
+        )
     else:
-        print(f"Downloading output_file_path: {output_file_path}")
+        video_path = tmp_path / f"{filename}_{video_id}{extension}"
 
-    # download the stream
-    video_stream = highest_quality.download(output_path=tmp_path, filename=video_filename)
-
-    # get all DASH audio streams
-    dash_streams = youtube.streams.filter(
-        type="audio", subtype="webm", progressive=False
+    # download the video stream
+    video_stream = highest_quality.download(
+        output_path=tmp_path, filename=video_path.name
     )
 
-    # sort by bitrate to get the highest quality stream
-    highest_quality = dash_streams.order_by("abr").desc().first()
+    # get highest quality audio stream
+    highest_quality_audio = youtube.streams.get_audio_only()
 
-    # Add the video_id to the filename
-    audio_filename = f"{youtube.video_id}_{highest_quality.default_filename}"
+    # Get the audio filename
+    default_filename = highest_quality_audio.default_filename
+    audio_path = Path(default_filename).stem
+    audio_extension = Path(default_filename).suffix
+    audio_id = youtube.video_id
+    audio_index = f"{index:02d}" if index else ""
 
-    # download the stream
+    # Form the audio filename
+    if index:
+        audio_path = (
+            tmp_path
+            / f"{audio_index}_{audio_path}_{audio_id}{audio_extension}"
+        )
+    else:
+        audio_path = tmp_path / f"{audio_path}_{audio_id}{audio_extension}"
+
+    # download the audio stream
     try:
-        audio_stream = highest_quality.download(output_path=tmp_path, filename=audio_filename)
+        audio_stream = highest_quality_audio.download(
+            output_path=tmp_path,
+            filename=highest_quality_audio.default_filename,
+        )
     except AttributeError as error:
         return f"AttributeError: {error}"
 
-    # Validate that both streams were downloaded and have the same duration
+    # Validate that both streams were downloaded
     if not video_stream or not audio_stream:
         return "Error: Could not download the streams"
 
@@ -105,16 +146,14 @@ def download_video_hq(youtube_url: str, output_path: Path = Path()) -> str:
         Path(video_stream).unlink()
         Path(audio_stream).unlink()
 
-    # Delete the temporal directory if it is empty
-    # if tmp_path.exists() and tmp_path.is_dir() and not list(tmp_path.iterdir()):
-    #     tmp_path.rmdir()
-
     # Return the path to the downloaded video
     return str(output_file_path)
 
 
 if __name__ == "__main__":
-    download_video_hq(
-        "https://www.youtube.com/watch?v=U0yFunptU1g&ab_channel=PhonkKawaii",
-        output_path=Path(r"E:\YouTube downloads\Phonk playlist"),
+    result = download_video_hq(
+        "https://youtu.be/R0tTsdQ_9Vw?si=IC6hT_THWfVXEydj",
+        output_path=Path(r"/home/jorge/youtube/test"),
+        index=1,
     )
+    print(result)

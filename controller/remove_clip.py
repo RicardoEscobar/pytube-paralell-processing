@@ -56,11 +56,11 @@ def get_video_file(input_dir: str = ".") -> str:
 
 @time_it
 def main():
-    VIDEO = r"F:\FIRECUDA2\grabaciones\Carhartt\2024-04-17\2024-04-17_12-25-51.mkv"
+    VIDEO = "/home/jorge/grabaciones/Carhartt/2024-05-10/2024-05-10_08-00-08.mkv"
     START_TIME = "00:00:00"
-    END_TIME = "00:06:03"
+    END_TIME = "00:52:09"
     OUTPUT_VIDEO_FILE = (
-        r"F:\FIRECUDA2\grabaciones\Carhartt\2024-04-17\2024-04-17_12-25-51_clip.mkv"
+        r"/home/jorge/grabaciones/Carhartt/2024-05-10/2024-05-10_08-00-08_clip.mkv"
     )
     remove_clip(VIDEO, START_TIME, END_TIME, OUTPUT_VIDEO_FILE)
 

@@ -161,7 +161,7 @@ def main():
     """Main function."""
 
     module_logger.info("Starting mkv_to_mp4.py")
-    PATH = Path(r"F:\FIRECUDA2\grabaciones")
+    PATH = Path(r"/home/jorge/grabaciones")
     VIDEO_CODEC = "libx265"
     module_logger.debug(f"VIDEO_CODEC: {VIDEO_CODEC}")
     module_logger.debug(f"PATH: {PATH}")

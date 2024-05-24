@@ -16,6 +16,8 @@ import threading as th
 import os
 from pathlib import Path
 import re
+import traceback
+import subprocess
 
 from tqdm import tqdm
 
@@ -57,13 +59,15 @@ def mkv_to_mp4(
 
     # ffmpeg_command = f'ffmpeg -hide_banner -loglevel error -i "{input_video_path}" -c:v libx264 -preset:v slow -crf 18 -r 60 -vf "scale=-2:1080,format=yuv420p" -c:a aac -b:a 192k -ac 2 -ar 48000 -movflags +faststart -n "{output_video_file}"'
     ffmpeg_command = f'ffmpeg -hide_banner -loglevel error -i "{input_video_path}" -c:v {video_codec} -c:a copy -n "{output_video_file}"'
-    module_logger.info(ffmpeg_command)
+    module_logger.info("%s", ffmpeg_command)
 
     try:
-        os.system(ffmpeg_command)
-    except Exception as exception:
-        module_logger.error(exception)
-        return None
+        subprocess.check_call(ffmpeg_command, shell=True)
+    except subprocess.CalledProcessError as error:
+        stacktrace = traceback.format_exc()
+        module_logger.error("Stacktrace: %s", stacktrace)
+        module_logger.error("Command \"%s\"\nFailed with exit code: %s", ffmpeg_command, error.returncode)
+        raise
     else:
         # Delete the input file.
         input_video_path.unlink()
@@ -97,6 +101,8 @@ def process_dir(input_dir, video_codec):
                 result = future.result()
                 module_logger.debug(f"Completed: {result}")
             except Exception as exception:
+                stacktrace = traceback.format_exc()
+                module_logger.error(f"Stacktrace: {stacktrace}")
                 module_logger.error(f"Exception: {exception}")
 
 

@@ -152,8 +152,8 @@ def download_video_hq(
 
 if __name__ == "__main__":
     result = download_video_hq(
-        "https://youtu.be/R0tTsdQ_9Vw?si=IC6hT_THWfVXEydj",
-        output_path=Path(r"/home/jorge/youtube/test"),
-        index=1,
+        "https://youtu.be/R0tTsdQ_9Vw?si=Dojkk3kwvtasCxVW",
+        output_path=Path("/home/jorge/youtube/Bash Scripting on Linux [Learn Linux TV]"),
+        index=7,
     )
     print(result)

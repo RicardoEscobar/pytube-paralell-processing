@@ -148,8 +148,8 @@ def main2():
         r"F:\FIRECUDA2\grabaciones\Carhartt\2024-04-18\2024-04-17_12-25-51_merge.mkv"
     )
     outputpath = Path(r"F:\FIRECUDA2\grabaciones\Carhartt\2024-04-18\output.mp4")
-    # ffmpeg -i input.mp4 output.mp4 1> progress.txt 2>&1
-    ffmpeg_command = f'ffmpeg -i "{str(videopath)}" "{str(outputpath)}" 1> "progress_{str(outputpath.stem)}.txt" 2>&1'
+    # ffmpeg -i input.mp4 output.mp4 1> progress.txt 2>&1 &
+    ffmpeg_command = f'ffmpeg -i "{str(videopath)}" "{str(outputpath)}" 1> "progress_{str(outputpath.stem)}.txt" 2>&1 &'
     print(ffmpeg_command)
 
     # uses the os.system() function to run the ffmpeg command
@@ -161,7 +161,7 @@ def main():
     """Main function."""
 
     module_logger.info("Starting mkv_to_mp4.py")
-    PATH = Path(r"F:\FIRECUDA2\grabaciones")
+    PATH = Path(r"F:\Twitch\Echoes of wisdom")
     VIDEO_CODEC = "libx265"
     module_logger.debug(f"VIDEO_CODEC: {VIDEO_CODEC}")
     module_logger.debug(f"PATH: {PATH}")

@@ -15,11 +15,9 @@ class TestDownloadPlaylist(unittest.TestCase):
     def test_download_playlist(self):
         """test_download_playlist"""
         url = "https://youtube.com/playlist?list=PLzuJYcABcR-QrC95jr3P-g9IHgNcP9F2Q&si=qDPbwOVeXDvvXjqq"
-        output_dir = r"E:\YouTube downloads"
+        output_dir = r"/home/jorge/youtube"
 
-        result = download_playlist(url, output_dir)
-        for path in result:
-            print(path)
+        download_playlist(url, output_dir)
 
 
 if __name__ == "__main__":

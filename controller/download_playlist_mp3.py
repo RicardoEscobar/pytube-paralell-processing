@@ -13,7 +13,7 @@ if __name__ == "__main__":
 from pathlib import Path
 from threading import Thread
 
-from pytube import Playlist
+from pytubefix import Playlist
 from typing import List
 from tqdm import tqdm
 

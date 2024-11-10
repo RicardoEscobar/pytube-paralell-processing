@@ -1,12 +1,12 @@
 """
 This module provides functionality for downloading a YouTube playlist using
-PyTube and multiprocessing.
+pytubefix and multiprocessing.
 """
 
 import concurrent.futures
 from pathlib import Path
 
-from pytube import Playlist
+from pytubefix import Playlist
 from typing import List, Union
 
 from controller.sanitize_path import sanitize_path

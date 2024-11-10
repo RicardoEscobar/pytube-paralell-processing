@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from pytube import YouTube
+from pytubefix import YouTube
 
 from controller.time_it import time_it
 from controller.to_mp3 import to_mp3

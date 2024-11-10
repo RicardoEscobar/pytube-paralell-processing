@@ -5,7 +5,7 @@ from typing import Generator, Tuple
 from pathlib import Path
 import re
 
-from pytube import YouTube, Playlist
+from pytubefix import YouTube, Playlist
 
 
 def rename(file: Path, index: int = None) -> Path:

@@ -9,7 +9,7 @@ if __name__ == "__main__":
 
 from controller.time_it import time_it
 from pathlib import Path
-from pytube import YouTube
+from pytubefix import YouTube
 from functools import partial
 
 from controller.progress_bar import on_progress

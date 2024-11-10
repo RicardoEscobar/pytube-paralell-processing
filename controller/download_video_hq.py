@@ -14,7 +14,7 @@ if __name__ == "__main__":
 import os
 import traceback
 from pathlib import Path
-from pytube import YouTube, exceptions
+from pytubefix import YouTube, exceptions
 from controller.sanitize_path import sanitize_path
 from controller.time_it import time_it
 
